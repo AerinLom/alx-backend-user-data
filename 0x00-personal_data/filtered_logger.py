@@ -5,6 +5,8 @@ Module containing the RedactingFormatter class for log message obfuscation.
 import logging
 import re
 from typing import List
+import os
+import mysql.connector
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
@@ -65,3 +67,23 @@ def get_logger() -> logging.Logger:
 
     logger.addHandler(stream_handler)
     return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """
+    Creates a connector to a MySQL database,
+    using credentials from environment variables.
+    """
+    db_host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = os.getenv("PERSONAL_DATA_DB_NAME", "")
+    db_user = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    db_pwd = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+
+    connection = mysql.connector.connect(
+        host=db_host,
+        user=db_user,
+        port=3306,
+        password=db_pwd,
+        database=db_name
+    )
+    return connection
