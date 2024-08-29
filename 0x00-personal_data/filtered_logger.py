@@ -87,3 +87,26 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         database=db_name
     )
     return connection
+
+
+def main():
+    """
+    Main function to filter and display data from the users table.
+    """
+    logger = get_logger()
+    db = get_db()
+
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users;")
+    rows = cursor.fetchall()
+
+    for row in rows:
+        log_message = "; ".join(f"{key}={value}" for key, value in row.items())
+        logger.info(log_message)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
