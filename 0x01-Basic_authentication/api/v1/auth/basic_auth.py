@@ -82,21 +82,8 @@ class BasicAuth(Auth):
         """
         Retrieves the user from a request
         """
-        auth_header = self.auth_header(request)
-        if auth_header is None:
-            return None
-
-        b64_auth = self.extract_base64_authorization_header(auth_header)
-        if b64_auth is None:
-            return None
-
+        authorization_header = self.authorization_header(request)
+        b64_auth = self.extract_base64_authorization_header(authorization_header)
         auth_token = self.decode_base64_authorization_header(b64_auth)
-        if auth_token is None:
-            return None
-
         email, password = self.extract_user_credentials(auth_token)
-        if email is None:
-            return None
-        if password is None:
-            return None
         return self.user_object_from_credentials(email, password)
