@@ -18,7 +18,7 @@ def login_user() -> Tuple[str, int]:
     user_email = request.form.get('email')
     if not user_email or len(user_email.strip()) == 0:
         return jsonify({"error": "email missing"}), 400
-    
+
     user_password = request.form.get('password')
     if not user_password or len(user_password.strip()) == 0:
         return jsonify({"error": "password missing"}), 400
@@ -35,10 +35,22 @@ def login_user() -> Tuple[str, int]:
 
     if user.is_valid_password(user_password):
         from api.v1.app import auth
-        
+
         session_id = auth.create_session(user.id)
         response = jsonify(user.to_json())
         response.set_cookie(os.getenv("SESSION_NAME"), session_id)
         return response
-    
+
     return jsonify({"error": "wrong password"}), 401
+
+
+@app_views.route(
+    '/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+def logout_user() -> Tuple[str, int]:
+    """Logout a user by deleting their session."""
+    from api.v1.app import auth
+    destroy_success = auth.destroy_session(request)
+    if not destroy_success:
+        abort(404)
+
+    return jsonify({}), 200
