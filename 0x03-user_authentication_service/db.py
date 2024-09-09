@@ -31,7 +31,7 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password:str) -> User:
+    def add_user(self, email: str, hashed_password: str) -> User:
         """
         Add a user to the database
         """
@@ -55,3 +55,21 @@ class DB:
             raise NoResultFound()
         except InvalidRequestError:
             raise InvalidRequestError()
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """
+        Updates a user object in the database
+        """
+        session = self._session
+        try:
+            selected_user = self.find_user_by(id=user_id)
+            for key, value in kwargs.items():
+                if hasattr(selected_user, key):
+                    setattr(selected_user, key, value)
+                else:
+                    raise ValueError()
+            session.commit()
+        except NoResultFound():
+            raise ValueError()
+        except InvalidRequestError:
+            raise ValueError()

@@ -12,7 +12,7 @@ Base = declarative_base()
 class User(Base):
     """
     User class for SQLAlchemy
-    """ 
+    """
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, nullable=False)
