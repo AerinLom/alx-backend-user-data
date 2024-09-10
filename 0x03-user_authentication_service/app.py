@@ -47,7 +47,7 @@ def logout() -> str:
     Logs user out of session
     """
     session_id = request.cookies.get("session_id")
-    logged_out_user = AUTH.get_user_from_session_id(session_id)
+    user = AUTH.get_user_from_session_id(session_id)
     if user is None:
         abort(403)
     AUTH.destroy_session(user.id)
