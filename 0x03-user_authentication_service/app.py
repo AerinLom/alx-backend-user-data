@@ -14,17 +14,14 @@ def home():
 
 
 @app.route("/users", methods=["POST"])
-def user_reg():
+def users():
     email = request.form.get("email")
     password = request.form.get("password")
-
-    if not email or not password:
-        return jsonify({"message": "email and password are required"}), 400
 
     try:
         user = AUTH.register_user(email, password)
         return jsonify({"email": user.email, "message": "user created"}), 201
-    except ValueError as e:
+    except ValueError:
         return jsonify({"message": "email already registered"}), 400
 
 
@@ -42,6 +39,19 @@ def login():
         response.set_cookie('session_id', session_id)
         return response
     abort(401)
+
+
+@app.route("/sessions", methods=["DELETE"], strict_slashes=False)
+def logout() -> str:
+    """
+    Logs user out of session
+    """
+    session_id = request.cookies.get("session_id")
+    logged_out_user = AUTH.get_user_from_session_id(session_id)
+    if logged_out_user is None:
+        abort(403)
+    AUTH.destroy_session(user.id)
+    return redirect("/")
 
 
 if __name__ == "__main__":
