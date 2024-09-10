@@ -50,7 +50,7 @@ def logout() -> str:
     logged_out_user = AUTH.get_user_from_session_id(session_id)
     if logged_out_user is None:
         abort(403)
-    AUTH.destroy_session(user.id)
+    AUTH.destroy_session(logged_out_user.id)
     return redirect("/")
 
 
